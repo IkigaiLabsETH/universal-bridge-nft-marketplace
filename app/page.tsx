@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import NFTGrid from "@/components/nft-grid"
 import PixelHeader from "@/components/pixel-header"
+import CollectionsGrid from "@/components/collections-grid"
 
 export default function Home() {
   return (
@@ -52,6 +53,10 @@ export default function Home() {
               </Link>
             </Card>
           </div>
+        </div>
+
+        <div className="mb-12">
+          <CollectionsGrid />
         </div>
 
         <div className="mb-8">

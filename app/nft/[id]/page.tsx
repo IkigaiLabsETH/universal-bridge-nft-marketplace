@@ -45,6 +45,7 @@ export default function NFTDetailPage({ params }: { params: { id: string } }) {
   const [listing, setListing] = useState<Listing | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isLiked, setIsLiked] = useState(false);
+  const [activeTab, setActiveTab] = useState("attributes");
 
   const chain = defineChain(arbitrumSepolia);
 
@@ -62,7 +63,6 @@ export default function NFTDetailPage({ params }: { params: { id: string } }) {
     );
   };
 
-  // Function to get attribute value by trait type
   const getAttributeValue = (attributes: any[], traitType: string) => {
     const attribute = attributes.find((attr) => attr.trait_type === traitType);
     return attribute ? attribute.value : "N/A";
@@ -92,7 +92,7 @@ export default function NFTDetailPage({ params }: { params: { id: string } }) {
 
   if (isLoading) {
     return (
-      <div className="pixel-container min-h-screen bg-zinc-900 text-white">
+      <div className="min-h-screen bg-black text-white">
         <PixelHeader />
         <main className="container mx-auto px-4 py-8">
           <div className="text-center py-20">
@@ -105,7 +105,7 @@ export default function NFTDetailPage({ params }: { params: { id: string } }) {
 
   if (!listing) {
     return (
-      <div className="pixel-container min-h-screen bg-zinc-900 text-white">
+      <div className="min-h-screen bg-black text-white">
         <PixelHeader />
         <main className="container mx-auto px-4 py-8">
           <div className="text-center py-20">
@@ -123,15 +123,12 @@ export default function NFTDetailPage({ params }: { params: { id: string } }) {
   }
 
   const power = getAttributeValue(listing.asset.metadata.attributes, "power");
-  const ability = getAttributeValue(
-    listing.asset.metadata.attributes,
-    "ability"
-  );
+  const ability = getAttributeValue(listing.asset.metadata.attributes, "ability");
   const level = getAttributeValue(listing.asset.metadata.attributes, "level");
   const type = getAttributeValue(listing.asset.metadata.attributes, "type");
 
   return (
-    <div className="pixel-container min-h-screen bg-zinc-900 text-white">
+    <div className="min-h-screen bg-black text-white">
       <PixelHeader />
 
       <main className="container mx-auto px-4 py-8">
@@ -144,206 +141,143 @@ export default function NFTDetailPage({ params }: { params: { id: string } }) {
         </Link>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="pixel-border bg-zinc-800 p-4">
-            <div className="aspect-square relative">
+          <div className="relative">
+            <div className="aspect-square relative overflow-hidden rounded-lg border-2 border-purple-500/20">
               <img
                 src={formatIpfsUrl(listing.asset.metadata.image)}
                 alt={listing.asset.metadata.name}
-                className="w-full h-full object-contain pixel-image"
+                className="w-full h-full object-cover"
               />
               <div className="absolute top-4 right-4 flex space-x-2">
                 <Button
                   variant="ghost"
                   size="icon"
-                  className={`bg-zinc-900/70 ${
-                    isLiked
-                      ? "text-red-500"
-                      : "text-purple-400 hover:text-purple-300"
+                  className={`bg-black/70 ${
+                    isLiked ? "text-red-500" : "text-purple-400 hover:text-purple-300"
                   }`}
                   onClick={() => setIsLiked(!isLiked)}
                 >
-                  <Heart
-                    className={`h-5 w-5 ${isLiked ? "fill-red-500" : ""}`}
-                  />
+                  <Heart className={`h-5 w-5 ${isLiked ? "fill-red-500" : ""}`} />
                 </Button>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="bg-zinc-900/70 text-purple-400 hover:text-purple-300"
+                  className="bg-black/70 text-purple-400 hover:text-purple-300"
                 >
                   <Share2 className="h-5 w-5" />
                 </Button>
               </div>
-              <div className="absolute bottom-4 left-4 bg-zinc-900/70 px-2 py-1 rounded pixel-tag">
-                <span className="text-xs text-purple-400">
-                  {listing.asset.supply === "1"
-                    ? "Unique"
-                    : `Supply: ${listing.asset.supply}`}
+              <div className="absolute bottom-4 left-4 bg-black/70 px-3 py-1 rounded-full">
+                <span className="text-sm text-purple-400">
+                  {listing.asset.supply === "1" ? "Unique" : `Supply: ${listing.asset.supply}`}
                 </span>
               </div>
             </div>
           </div>
 
-          <div>
-            <div className="pixel-border bg-zinc-800 p-6 mb-6">
-              <div className="flex justify-between items-start mb-4">
+          <div className="space-y-6">
+            <div className="space-y-4">
+              <div className="flex justify-between items-start">
                 <div>
-                  <h1 className="pixel-text text-3xl font-bold text-green-400 mb-1">
+                  <h1 className="text-3xl font-bold text-white mb-1">
                     {listing.asset.metadata.name}
                   </h1>
                   <p className="text-sm text-zinc-400">
                     Created by{" "}
                     <span className="text-purple-400">
-                      {`${listing.creatorAddress.substring(
-                        0,
-                        6
-                      )}...${listing.creatorAddress.substring(
+                      {`${listing.creatorAddress.substring(0, 6)}...${listing.creatorAddress.substring(
                         listing.creatorAddress.length - 4
                       )}`}
                     </span>
                   </p>
                 </div>
-                <div className="bg-zinc-900 px-3 py-1 rounded pixel-tag">
-                  <span className="text-sm text-green-400">{type}</span>
+                <div className="bg-purple-500/10 px-3 py-1 rounded-full">
+                  <span className="text-sm text-purple-400">{type}</span>
                 </div>
               </div>
 
-              <p className="mb-6 text-zinc-300">
-                {listing.asset.metadata.description}
-              </p>
+              <p className="text-zinc-300">{listing.asset.metadata.description}</p>
 
-              <div className="mb-6">
+              <div className="bg-zinc-900/50 p-4 rounded-lg">
                 <p className="text-sm text-zinc-400 mb-1">Current price</p>
                 <div className="flex items-baseline">
                   <span className="text-2xl font-bold text-green-400 mr-2">
-                    {listing.currencyValuePerToken.displayValue}{" "}
-                    {listing.currencyValuePerToken.symbol}
+                    {listing.currencyValuePerToken.displayValue} {listing.currencyValuePerToken.symbol}
                   </span>
                 </div>
               </div>
 
               <div className="flex gap-4">
-                <Button className="flex-1 pixel-button bg-purple-600 hover:bg-purple-700">
+                <Button className="flex-1 bg-purple-600 hover:bg-purple-700 h-12">
                   <ShoppingCart className="mr-2 h-4 w-4" />
                   Buy Now
                 </Button>
-                <Button className="flex-1 pixel-button bg-green-600 hover:bg-green-700">
+                <Button className="flex-1 bg-green-600 hover:bg-green-700 h-12">
                   Make Offer
                 </Button>
               </div>
             </div>
 
-            <Tabs
-              defaultValue="attributes"
-              className="pixel-border bg-zinc-800"
-            >
-              <TabsList className="w-full grid grid-cols-3 bg-zinc-900">
-                <TabsTrigger
-                  value="attributes"
-                  className="data-[state=active]:bg-purple-600 data-[state=active]:text-white"
-                >
-                  Attributes
-                </TabsTrigger>
-                <TabsTrigger
-                  value="details"
-                  className="data-[state=active]:bg-purple-600 data-[state=active]:text-white"
-                >
-                  Details
-                </TabsTrigger>
-                <TabsTrigger
-                  value="history"
-                  className="data-[state=active]:bg-purple-600 data-[state=active]:text-white"
-                >
-                  History
-                </TabsTrigger>
-              </TabsList>
+            <div className="bg-zinc-900/50 rounded-lg overflow-hidden">
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                <TabsList className="w-full grid grid-cols-3 bg-zinc-900/50">
+                  <TabsTrigger
+                    value="attributes"
+                    className="data-[state=active]:bg-purple-600 data-[state=active]:text-white"
+                  >
+                    Attributes
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="details"
+                    className="data-[state=active]:bg-purple-600 data-[state=active]:text-white"
+                  >
+                    Details
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="history"
+                    className="data-[state=active]:bg-purple-600 data-[state=active]:text-white"
+                  >
+                    History
+                  </TabsTrigger>
+                </TabsList>
 
-              <TabsContent value="attributes" className="p-4">
-                <div className="grid grid-cols-3 gap-4">
-                  <Card className="pixel-card bg-zinc-900 border-purple-500">
-                    <CardContent className="p-4 text-center">
-                      <p className="text-sm text-zinc-400 mb-1">Power</p>
-                      <p className="text-xl font-bold text-green-400">
-                        {power}
-                      </p>
-                    </CardContent>
-                  </Card>
-                  <Card className="pixel-card bg-zinc-900 border-purple-500">
-                    <CardContent className="p-4 text-center">
-                      <p className="text-sm text-zinc-400 mb-1">Ability</p>
-                      <p className="text-xl font-bold text-purple-400">
-                        {ability}
-                      </p>
-                    </CardContent>
-                  </Card>
-                  <Card className="pixel-card bg-zinc-900 border-purple-500">
-                    <CardContent className="p-4 text-center">
-                      <p className="text-sm text-zinc-400 mb-1">Level</p>
-                      <p className="text-xl font-bold text-green-400">
-                        {level}
-                      </p>
-                    </CardContent>
-                  </Card>
-                </div>
-              </TabsContent>
+                <TabsContent value="attributes" className="p-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    {listing.asset.metadata.attributes.map((attr, index) => (
+                      <Card key={index} className="bg-zinc-800/50 border-zinc-700">
+                        <CardContent className="p-4">
+                          <p className="text-sm text-zinc-400">{attr.trait_type}</p>
+                          <p className="text-lg font-medium text-white">{attr.value}</p>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </TabsContent>
 
-              <TabsContent value="details" className="p-4">
-                <div className="space-y-4">
-                  <div className="flex justify-between">
-                    <span className="text-zinc-400">Contract Address</span>
-                    <span className="text-purple-400 truncate max-w-[200px]">
-                      {`${listing.assetContractAddress.substring(
-                        0,
-                        6
-                      )}...${listing.assetContractAddress.substring(
-                        listing.assetContractAddress.length - 4
-                      )}`}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-zinc-400">Token ID</span>
-                    <span className="text-purple-400">{listing.tokenId}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-zinc-400">Token Standard</span>
-                    <span className="text-purple-400">ERC-1155</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-zinc-400">Blockchain</span>
-                    <span className="text-purple-400">Arbitrum Sepolia</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-zinc-400">Listing ID</span>
-                    <span className="text-purple-400">#{listing.id}</span>
-                  </div>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="history" className="p-4">
-                <div className="space-y-4">
-                  <div className="border-b border-zinc-700 pb-4 last:border-0">
-                    <div className="flex justify-between mb-1">
-                      <span className="font-bold text-green-400">Listed</span>
-                      <span className="text-purple-400">Now</span>
+                <TabsContent value="details" className="p-4">
+                  <div className="space-y-4">
+                    <div>
+                      <p className="text-sm text-zinc-400">Contract Address</p>
+                      <p className="text-white">{listing.assetContractAddress}</p>
                     </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-zinc-400">
-                        {`${listing.creatorAddress.substring(
-                          0,
-                          6
-                        )}...${listing.creatorAddress.substring(
-                          listing.creatorAddress.length - 4
-                        )}`}
-                      </span>
-                      <span className="text-zinc-300">
-                        {listing.currencyValuePerToken.displayValue}{" "}
-                        {listing.currencyValuePerToken.symbol}
-                      </span>
+                    <div>
+                      <p className="text-sm text-zinc-400">Token ID</p>
+                      <p className="text-white">{listing.tokenId}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-zinc-400">Token Standard</p>
+                      <p className="text-white">ERC-721</p>
                     </div>
                   </div>
-                </div>
-              </TabsContent>
-            </Tabs>
+                </TabsContent>
+
+                <TabsContent value="history" className="p-4">
+                  <div className="text-center text-zinc-400">
+                    No transaction history available
+                  </div>
+                </TabsContent>
+              </Tabs>
+            </div>
           </div>
         </div>
       </main>
